@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.containsString;
 
 public class APITest
 {
+    //First exercise
     RequestSpecification requestSpec = new RequestSpecBuilder()
             .build()
             .given().baseUri("https://rickandmortyapi.com")
@@ -29,13 +30,13 @@ public class APITest
             .expectStatusCode(200)
             .build();
 
-
     @Tag("1api")
     @Test
     @DisplayName("Персонаж Морти")
     public void morty()
     {
         //Step 1
+        System.out.println("Первый тест про Морти");
         Response respCharacterMorty = given(requestSpec)
                 .when()
                 .get("/api/character/?name=Morty")
@@ -45,7 +46,6 @@ public class APITest
                 .response();
 
         String resp = respCharacterMorty.getBody().asString();
-
         JSONObject jsonCharacterMorty = new JSONObject(resp);
 
         //Step 2
@@ -55,6 +55,7 @@ public class APITest
 
         String speciesMorty = jsonCharacterMorty.getJSONArray("results").getJSONObject(0).getString("species");
         String locationMorty = jsonCharacterMorty.getJSONArray("results").getJSONObject(0).getJSONObject("location").getString("name");
+
         //Step 3
         Response respLastEpisodMorty = given(requestSpec)
                 .when()
@@ -65,7 +66,6 @@ public class APITest
                 .response();
 
         resp = respLastEpisodMorty.getBody().asString();
-
         JSONObject jsonLastEpisodMorty = new JSONObject(resp);
 
         JSONArray objects = jsonLastEpisodMorty.getJSONArray("characters");
@@ -83,6 +83,7 @@ public class APITest
 
         resp = respLastCharacter.getBody().asString();
         JSONObject jsonLastCharacter = new JSONObject(resp);
+
         String speciesLastCharacter = jsonLastCharacter.getString("species");
         String locationLastCharacter = jsonLastCharacter.getJSONObject("location").getString("name");
 
@@ -106,7 +107,7 @@ public class APITest
         }
     }
 
-
+    //Second exercise
     RequestSpecification requestSpecReqres = new RequestSpecBuilder()
             .build()
             .given().baseUri("https://reqres.in/")
@@ -130,6 +131,7 @@ public class APITest
     @DisplayName("Reqres")
     public void reqres()
     {
+        System.out.println("Второй тест про Reqres");
         //Post
         JSONObject bodyPost = new JSONObject();
         bodyPost.put("name", "Tomato");
@@ -145,7 +147,6 @@ public class APITest
                 .response();
 
         String respRP = respReqresPost.getBody().asString();
-
         JSONObject jsonReqresPost = new JSONObject(respRP);
         int id = jsonReqresPost.getInt("id");
 
@@ -154,7 +155,6 @@ public class APITest
         System.out.println("Name и job для POST совпадают");
 
         //Put
-
         JSONObject bodyPut = new JSONObject();
         bodyPut.put("name", "TomatoNew");
         bodyPut.put("job", "Eat maket");
@@ -187,9 +187,5 @@ public class APITest
         Assertions.assertEquals(respReqresDelete.getStatusCode(), 204);
         System.out.println("Запись с номером " + id + " удалена");
 
-
-
     }
-
-
 }

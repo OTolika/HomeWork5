@@ -1,3 +1,8 @@
+import com.codeborne.selenide.logevents.SelenideLogger;
+import io.qameta.allure.Allure;
+import io.qameta.allure.restassured.AllureRestAssured;
+import io.qameta.allure.selenide.AllureSelenide;
+import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.http.ContentType;
@@ -7,10 +12,8 @@ import io.restassured.specification.ResponseSpecification;
 import org.hamcrest.Matcher;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.util.ArrayList;
 
@@ -19,6 +22,12 @@ import static org.hamcrest.Matchers.containsString;
 
 public class APITest
 {
+    @BeforeAll
+    public static void beforeAll() throws Exception
+    {
+            RestAssured.filters(new AllureRestAssured());
+    }
+
     //First exercise
     RequestSpecification requestSpec = new RequestSpecBuilder()
             .build()

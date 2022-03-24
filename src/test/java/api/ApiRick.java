@@ -14,15 +14,21 @@ import static io.restassured.RestAssured.given;
 
 public class ApiRick extends Hooks
 {
-    public RequestSpecification requestSpec = new RequestSpecBuilder()
-            .build()
-            .given().baseUri("https://rickandmortyapi.com")
-            .contentType(ContentType.JSON)
-            .log().all();
+    public RequestSpecification requestSpec;
 
     public ResponseSpecification responseSpec = new ResponseSpecBuilder()
             .expectStatusCode(200)
             .build();
+
+    public ApiRick()
+    {
+        String url = getProperty("urlRick");
+        requestSpec = new RequestSpecBuilder()
+                .build()
+                .given().baseUri(url)
+                .contentType(ContentType.JSON)
+                .log().all();
+    }
 
     public JSONObject getMorty()
     {

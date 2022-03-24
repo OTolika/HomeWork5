@@ -7,17 +7,12 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 import org.json.JSONObject;
-import org.junit.jupiter.api.Assertions;
 
 import static io.restassured.RestAssured.given;
 
 public class ApiReqres extends Hooks
 {
-    RequestSpecification requestSpecReqres = new RequestSpecBuilder()
-            .build()
-            .given().baseUri("https://reqres.in/")
-            .contentType("application/json; charset=utf-8")
-            .log().all();
+    RequestSpecification requestSpecReqres;
 
     ResponseSpecification responseSpecReqresPost = new ResponseSpecBuilder()
             .expectStatusCode(201)
@@ -31,15 +26,21 @@ public class ApiReqres extends Hooks
             .expectStatusCode(204)
             .build();
 
-    public int checkPost()
+    public ApiReqres()
     {
-        JSONObject bodyPost = new JSONObject();
-        bodyPost.put("name", "Tomato");
-        bodyPost.put("job", "Eat maket");
+        String url = getProperty("urlReqres");
+        requestSpecReqres = new RequestSpecBuilder()
+            .build()
+            .given().baseUri(url)
+            .contentType("application/json; charset=utf-8")
+            .log().all();
+    }
 
+    public JSONObject checkPost(JSONObject body)
+    {
         Response respReqresPost = given(requestSpecReqres)
                 .when()
-                .body(bodyPost.toString())
+                .body(body.toString())
                 .post("/api/users")
                 .then()
                 .spec(responseSpecReqresPost)
@@ -48,23 +49,14 @@ public class ApiReqres extends Hooks
 
         String respRP = respReqresPost.getBody().asString();
         JSONObject jsonReqresPost = new JSONObject(respRP);
-        int id = jsonReqresPost.getInt("id");
-
-        Assertions.assertEquals(jsonReqresPost.getString("name"), bodyPost.getString("name"));
-        Assertions.assertEquals(jsonReqresPost.getString("job"), bodyPost.getString("job"));
-
-        return id;
+        return jsonReqresPost;
     }
 
-    public void checkPut(int id)
+    public JSONObject checkPut(int id, JSONObject body)
     {
-        JSONObject bodyPut = new JSONObject();
-        bodyPut.put("name", "TomatoNew");
-        bodyPut.put("job", "Eat maket");
-
         Response respReqresPut = given(requestSpecReqres)
                 .when()
-                .body(bodyPut.toString())
+                .body(body.toString())
                 .put("/api/users/" + id)
                 .then()
                 .spec(responseSpecReqresPut)
@@ -73,13 +65,10 @@ public class ApiReqres extends Hooks
 
         String respRP = respReqresPut.getBody().asString();
         JSONObject jsonReqresPut = new JSONObject(respRP);
-
-        Assertions.assertEquals(jsonReqresPut.getString("name"), bodyPut.getString("name"));
-        Assertions.assertEquals(jsonReqresPut.getString("job"), bodyPut.getString("job"));
-        System.out.println("Name и job для PUT совпадают");
+        return jsonReqresPut;
     }
 
-    public void checkDelete(int id)
+    public Response checkDelete(int id)
     {
         Response respReqresDelete = given(requestSpecReqres)
                 .when()
@@ -88,8 +77,6 @@ public class ApiReqres extends Hooks
                 .spec(responseSpecReqresDelete)
                 .extract()
                 .response();
-
-        Assertions.assertEquals(respReqresDelete.getStatusCode(), 204);
-        System.out.println("Запись с номером " + id + " удалена");
+        return respReqresDelete;
     }
 }
